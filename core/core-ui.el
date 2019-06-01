@@ -176,7 +176,7 @@ read-only or not file-visiting."
  echo-keystrokes 0.02
  enable-recursive-minibuffers nil
  frame-inhibit-implied-resize t
- frame-title-format '("%b – Doom Emacs") ; simple name in frame title
+ frame-title-format '("%b – Brann Emacs") ; simple name in frame title
  ;; remove continuation arrow on right fringe
  fringe-indicator-alist
  (delq (assq 'continuation fringe-indicator-alist)

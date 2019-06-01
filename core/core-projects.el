@@ -66,7 +66,7 @@ c) are not valid projectile projects."
                       (member (substring proot 0 -1) blacklist)
                       (and doom-projectile-cache-purge-non-projects
                            (not (doom-project-p proot))))
-               do (doom-log "Removed %S from projectile cache" proot)
+               do (doom-log "Se eliminó %S de la cache" proot)
                and do (remhash proot projectile-projects-cache)
                and do (remhash proot projectile-projects-cache-time)
                and do (remhash proot projectile-project-type-cache))

@@ -240,7 +240,7 @@ savehist file."
                   (lambda ()
                     (condition-case e (funcall old-smie-config-guess)
                       (error (setq dtrt-indent-run-after-smie t)
-                             (message "[WARNING] Indent detection: %s"
+                             (message "[WARNING] Detección de sangría: %s"
                                       (error-message-string e))
                              (message "")))))) ; warn silently
         (funcall orig-fn arg))))
