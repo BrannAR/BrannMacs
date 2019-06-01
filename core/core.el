@@ -2,7 +2,7 @@
 
 (eval-when-compile
   (and (version< emacs-version "25.3")
-       (error "Detected Emacs %s. Doom only supports Emacs 25.3 and higher"
+       (error "El Emacs que está instalado en su sistema es el %s. BrannMacs solo soporta Emacs 25.3 o superior."
               emacs-version)))
 
 (defvar doom-debug-mode (or (getenv "DEBUG") init-file-debug)
@@ -15,8 +15,8 @@ DEBUG envvar will enable this at startup.")
 ;;
 ;;; Constants
 
-(defconst doom-version "2.0.9"
-  "Current version of Doom Emacs.")
+(defconst doom-version "0.0.1"
+  "La versión actual de BrannMacs")
 
 (defconst EMACS26+ (> emacs-major-version 25))
 (defconst EMACS27+ (> emacs-major-version 26))
@@ -136,12 +136,12 @@ Doom was setup, which may cause problems.")
 ;;
 ;;; Custom error types
 
-(define-error 'doom-error "Error in Doom Emacs core")
-(define-error 'doom-hook-error "Error in a Doom startup hook" 'doom-error)
-(define-error 'doom-autoload-error "Error in an autoloads file" 'doom-error)
-(define-error 'doom-module-error "Error in a Doom module" 'doom-error)
-(define-error 'doom-private-error "Error in private config" 'doom-error)
-(define-error 'doom-package-error "Error with packages" 'doom-error)
+(define-error 'doom-error "Error en el núcleo de BrannMacs")
+(define-error 'doom-hook-error "Error en un hook de inicio" 'doom-error)
+(define-error 'doom-autoload-error "Error en un archivo de carga" 'doom-error)
+(define-error 'doom-module-error "Error en un módulo" 'doom-error)
+(define-error 'doom-private-error "Error en la configuración privada" 'doom-error)
+(define-error 'doom-package-error "Error de paquetes" 'doom-error)
 
 
 ;;
@@ -274,7 +274,7 @@ enable multiple minor modes for the same regexp.")
   "Automatically create missing directories when creating new files."
   (let ((parent-directory (file-name-directory buffer-file-name)))
     (when (and (not (file-exists-p parent-directory))
-               (y-or-n-p (format "Directory `%s' does not exist! Create it?" parent-directory)))
+               (y-or-n-p (format "¡El fichero `%s' no existe! ¿Deseas crearlo?" parent-directory)))
       (make-directory parent-directory t))))
 (add-hook 'find-file-not-found-functions #'doom|create-non-existent-directories)
 
@@ -321,18 +321,18 @@ intervals."
         (let* ((reqs (cl-delete-if #'featurep packages))
                (req (ignore-errors (pop reqs))))
           (when req
-            (doom-log "Incrementally loading %s" req)
+            (doom-log "Cargando %s de forma incremental" req)
             (condition-case e
                 (or (while-no-input (require req nil t) t)
                     (push req reqs))
               ((error debug)
-               (message "Failed to load '%s' package incrementally, because: %s"
+               (message "Fallo al cargar el paquete '%s', debido a: %s"
                         req e)))
             (if reqs
                 (run-with-idle-timer doom-incremental-idle-timer
                                      nil #'doom-load-packages-incrementally
                                      reqs t)
-              (doom-log "Finished incremental loading"))))))))
+              (doom-log "Se terminó la carga incremental"))))))))
 
 (defun doom|load-packages-incrementally ()
   "Begin incrementally loading packages in `doom-incremental-packages'.
@@ -356,7 +356,7 @@ If this is a daemon session, load them all immediately instead."
 issues easier.
 
 Meant to be used with `run-hook-wrapped'."
-  (doom-log "Running doom hook: %s" hook)
+  (doom-log "Ejecutando el hook: %s" hook)
   (condition-case e
       (funcall hook)
     ((debug error)
@@ -376,14 +376,14 @@ Meant to be used with `run-hook-wrapped'."
   (cond ((not doom-emacs-changed-p))
         ((y-or-n-p
           (format
-           (concat "Your version of Emacs has changed from %s to %s, which may cause incompatibility\n"
-                   "issues. If you run into errors, run `bin/doom compile :plugins` or reinstall your\n"
-                   "plugins to resolve them.\n\n"
-                   "Continue?")
+           (concat "Tu versión de Emacs cambió de %s a %s, lo que puede causar problemas de compatibilidad\n"
+                   ". Si te encuentras con algún error ejecuta `bin/brann compile :plugins` o reinstala tus\n"
+                   "plugins para resolver los errores.\n\n"
+                   "¿Continuar?")
            doom--last-emacs-version
            emacs-version))
          (delete-file doom--last-emacs-file))
-        (noninteractive (error "Aborting"))
+        (noninteractive (error "Abortando"))
         ((kill-emacs))))
 
 (defun doom-ensure-core-directories-exist ()
@@ -399,7 +399,7 @@ they were loaded at startup.
 
 If RETURN-P, return the message as a string instead of displaying it."
   (funcall (if return-p #'format #'message)
-           "Doom loaded %s packages across %d modules in %.03fs"
+           "Brann cargó %s paquetes entre %d módulos en %.03fs"
            (length package-activated-list)
            (if doom-modules (hash-table-count doom-modules) 0)
            (or doom-init-time
@@ -424,7 +424,7 @@ in interactive sessions, nil otherwise (but logs a warning)."
       (load (file-name-sans-extension file) 'noerror 'nomessage)
     ((debug error)
      (if noninteractive
-         (message "Autoload file warning: %s -> %s" (car e) (error-message-string e))
+         (message "Advertencia de archivo autocargado: %s -> %s" (car e) (error-message-string e))
        (signal 'doom-autoload-error (list (file-name-nondirectory file) e))))))
 
 (defun doom-load-env-vars (file)
@@ -494,7 +494,7 @@ to least)."
       (doom-ensure-core-packages)
 
       (unless (or force-p noninteractive)
-        (user-error "Your doom autoloads are missing! Run `bin/doom refresh' to regenerate them")))
+        (user-error "Tus autoloads no se encuentran disponibles! Ejecuta `bin/brann refresh' para regenerarlos")))
 
     ;; Loads `doom-package-autoload-file', which loads a concatenated package
     ;; autoloads file and caches `load-path', `auto-mode-alist',
@@ -504,7 +504,7 @@ to least)."
       (unless (or force-p
                   (doom-initialize-autoloads doom-package-autoload-file)
                   noninteractive)
-        (user-error "Your package autoloads are missing! Run `bin/doom refresh' to regenerate them")))
+        (user-error "Tus autoloads no se encuentran disponibles! Ejecuta `bin/brann refresh' para regenerarlos")))
 
     ;; Load shell environment
     (when (and (not noninteractive)
